@@ -1,0 +1,19 @@
+%date 2020-12-25
+%title 
+
+* https://docs.python.org/2/library/string.html#format-specification-mini-language
+* https://docs.python.org/3/library/functions.html?highlight=int#int
+* https://docs.python.org/3/library/time.html#module-time
+* https://docs.python.org/3/library/stdtypes.html?highlight=split#str.split
+* https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
+
+time in ex : code of program : type of event : question : answer \n
+
+f = open("wt.log", "r")
+a = f.read()
+a.strip().split(' , ')
+
+La funzione log potrebbe essere messa in una classe.
+
+- choose N1 words, each to be repeated N2 times correctly
+- 
