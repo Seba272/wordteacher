@@ -4,14 +4,18 @@ import random
 import json
 from os import path
 
+this_file = "word_teacher_v0.2"
 log_file = "wt.log"
 log_separator = " ; "
+diz_data_file = "diz_data_file2"
+diz_file="dict"
+diz_data=[] 
 
 def write_log(qst,ans_c,ans):
     with open(log_file,"a") as fl:
         fl.write(format(time.time().__int__(),"x"))
         fl.write(log_separator)
-        fl.write("word teacher 01.2")
+        fl.write(this_file)
         fl.write(log_separator)
         fl.write(qst)
         fl.write(log_separator)
@@ -20,8 +24,6 @@ def write_log(qst,ans_c,ans):
         fl.write(ans)
         fl.write(" \n")
 
-diz_file="dict"
-diz_data=[] 
 # [[0:lang0, 1:lang1, 2:number of positive tests, 3:number of negative tests, 4:date of last test],...]
 
 def diz_upload(f=diz_file):
@@ -43,20 +45,26 @@ def diz_upload(f=diz_file):
     return dd
 
 def testing(test_batch):
-    for test in test_batch:
-        p = (random.random() < 1/2) 
-        question = lang[p] + ":\t" + diz_data[test][p]
-        rightans = diz_data[test][not p]
-        answer = input("\n" + question + "\n" + lang[not p] + ":\t")
-        write_log(question,lang[not p] + ": " + rightans,answer)
-        if answer.strip()==rightans :
-            diz_data[test][2]+=1
+    number_words = len(test_batch)
+    while number_words > 0 :
+        k = random.randrange(number_words)
+        if test_batch[k][1] == 0 :
+            test_batch.pop(k)
+            number_words -= 1
         else :
-            diz_data[test][3]+=1
-            print("No, the right answer is: " + rightans)
-        diz_data[test][4]=time.time().__int__()
-
-diz_data_file = "diz_data_file2"
+            p = random.randrange(2)
+            question = lang[p] + ":\t" + diz_data[test_batch[k][0]][p]
+            rightans = diz_data[test_batch[k][0]][not p]
+            answer = input("\n" + question + "\n" + lang[not p] + ":\t")
+            write_log(question,lang[not p] + ": " + rightans,answer)
+            if answer.strip() == rightans :
+                diz_data[test_batch[k][0]][2] += 1
+                test_batch[k][1] -= 1
+            else :
+                diz_data[test_batch[k][0]][3] += 1
+                test_batch[k][1] += 1
+                print("No, the right answer is: " + rightans)
+            diz_data[test_batch[k][0]][4]=time.time().__int__()
 
 def diz_data_save(f=diz_data_file,dd=diz_data):
     with open(f,"w") as fl:
@@ -70,13 +78,31 @@ def diz_data_upload(f=diz_data_file,dd=diz_data):
         dd = diz_upload()
     return dd
 
-def choose_batch(dd=diz_data):
-    return range(1,len(diz_data))
+# [[index in diz,level],...]
+def choose_batch(dd=diz_data,n_words=5):
+    a = []
+    k = 1
+    today = int(time.time())
+    strat_exercise = [5,5,3,2,1]
+    strat_repetitions = max(strat_exercise)
+    strat_days = len(strat_exercise)
+#    print("choose_batch: diz_data, dd: \n",dd)
+#    print("choose_batch: today \n",today)
+    for w in range(1,len(dd)) :
+        k+=1
+        word_days = max(int((dd[w][4]-today)/86400),0)
+        word_level = dd[w][2]-dd[w][3]
+#        print("choose_batch: w=",w,"; word_days=",word_days,"; word_level=",word_level,"; strat_days=",strat_days,"; sum=",sum([strat_exercise[j] for j in range(word_days)]),"; k=",k,"\n")
+        if word_days < strat_days and word_level < sum([strat_exercise[j] for j in range(word_days+1)]) :
+            a.append([w,strat_exercise[word_days]])
+        if k >= n_words :
+            break
+#    print("choose_batch: a:\n",a)
+    return a
 
 
 diz_data = diz_data_upload()
 lang = diz_data[0][0:2]
-#lang = [ "Italiano", "Deutsch"]
 test_batch = choose_batch(diz_data)
 testing(test_batch)
 diz_data_save(diz_data_file,diz_data)
@@ -86,11 +112,6 @@ diz_data_save(diz_data_file,diz_data)
 
 
 
-#k = 0
-#for k in range(5) :
-#    question = "Cosa è " + str(k) + " a parole?"
-#    answer = input(question + '\n\t')
-#    write_log(question,answer)
 
 
 
