@@ -104,17 +104,15 @@ class dizionario:
             with open(f_status_name,"w") as f_status :
                 f_status.write(tabulate(table,header))
 
-def write_log(qst,ans_c,ans):
+def write_log(string):
     with open(log_file,"a") as fl:
         fl.write(format(time.time().__int__(),"x"))
         fl.write(log_separator)
         fl.write(this_file)
         fl.write(log_separator)
-        fl.write(qst)
+        fl.write(diz.theme)
         fl.write(log_separator)
-        fl.write(ans_c)
-        fl.write(log_separator)
-        fl.write(ans)
+        fl.write(string)
         fl.write(" \n")
 
 def testing(test_batch,from_diz):
@@ -130,7 +128,7 @@ def testing(test_batch,from_diz):
                 question = from_diz.languages[p] + ": " + from_diz.data[test_batch[k][0]][p]
                 rightans = from_diz.data[test_batch[k][0]][not p]
                 answer = input( "\n" + question + "\n" + from_diz.languages[not p] + ": " )
-                write_log(question,from_diz.languages[not p] + ": " + rightans,answer)
+                write_log(from_diz.data[test_batch[k][0]][p] + log_separator + from_diz.data[test_batch[k][0]][not p] + log_separator + answer)
                 if answer.strip() == rightans :
                     from_diz.data[test_batch[k][0]][2] += 1
                     test_batch[k][1] -= 1
