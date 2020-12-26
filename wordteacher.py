@@ -11,6 +11,11 @@ this_file = "word_teacher_v1.2"
 log_file = "wt.log"
 log_separator = " ; "
 
+#colors = { 0:'\x1b[91m' , 1:'\x1b[94m', s: }
+class colors:
+    lang = { 0:'\x1b[91m' , 1:'\x1b[94m' }
+    std = '\033[0m'
+
 class dizionario:
     strategy = [2,2,2,2,2]
     
@@ -18,6 +23,7 @@ class dizionario:
         #nonlocal self.data, self.theme
         self.theme = theme
         self.languages = theme.split("-")
+        self.languages = [ ( colors.lang[k] + self.languages[k] ) for k in range(2) ]
         self.f_origin_name = self.theme + ".csv"
         self.f_data_name = "." + self.theme + ".wt"
         self.data = []
@@ -114,25 +120,30 @@ def write_log(qst,ans_c,ans):
 
 def testing(test_batch,from_diz):
     number_words = len(test_batch)
-    while number_words > 0 :
-        k = random.randrange(number_words)
-        if test_batch[k][1] == 0 :
-            test_batch.pop(k)
-            number_words -= 1
-        else :
-            p = random.randrange(2)
-            question = from_diz.languages[p] + ":\t" + from_diz.data[test_batch[k][0]][p]
-            rightans = from_diz.data[test_batch[k][0]][not p]
-            answer = input("\n" + question + "\n" + from_diz.languages[not p] + ":\t")
-            write_log(question,from_diz.languages[not p] + ": " + rightans,answer)
-            if answer.strip() == rightans :
-                from_diz.data[test_batch[k][0]][2] += 1
-                test_batch[k][1] -= 1
+    try:
+        while number_words > 0 :
+            k = random.randrange(number_words)
+            if test_batch[k][1] == 0 :
+                test_batch.pop(k)
+                number_words -= 1
             else :
-                from_diz.data[test_batch[k][0]][3] += 1
-                test_batch[k][1] += 1
-                print("No, the right answer is: ", rightans)
-            from_diz.data[test_batch[k][0]][5] = int(time.time())
+                p = random.randrange(2)
+                question = from_diz.languages[p] + ":\t" + from_diz.data[test_batch[k][0]][p]
+                rightans = from_diz.data[test_batch[k][0]][not p]
+                answer = input( "\n" + question + "\n" + from_diz.languages[not p] + ":\t" )
+                write_log(question,from_diz.languages[not p] + ": " + rightans,answer)
+                if answer.strip() == rightans :
+                    from_diz.data[test_batch[k][0]][2] += 1
+                    test_batch[k][1] -= 1
+                else :
+                    from_diz.data[test_batch[k][0]][3] += 1
+                    test_batch[k][1] += 1
+                    print(colors.std + "No, the right answer is: ", rightans)
+                from_diz.data[test_batch[k][0]][5] = int(time.time())
+    except KeyboardInterrupt:
+        print(colors.std)
+        pass
+    print(colors.std)
 
 def learn():
     length_batch = int(input("How many words? "))
@@ -165,7 +176,11 @@ while 1:
     ans = input()
     if ans == "q" :
         sys.exit()
-    ans = int(ans)
+    try:
+        ans = int(ans)
+    except ValueError :
+        print("There is not such option.")
+        continue
     if ans == 0:
         theme = input("Which theme?")
     elif ans <= len(dictionaries) :
