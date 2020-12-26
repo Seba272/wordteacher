@@ -17,3 +17,9 @@ La funzione log potrebbe essere messa in una classe.
 
 - choose N1 words, each to be repeated N2 times correctly
 - 
+== ToDo ==
+* [ ] Make of it a program in bin
+* [ ] Make better format for printout
+* [ ] Make options depend on dictionary
+* [ ] Make a better relation between theme and languages (for instance, use different levels for same languages)
+* [ ] Choose a good strategy (although it will be then optional)
