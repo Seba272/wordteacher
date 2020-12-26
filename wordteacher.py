@@ -11,7 +11,6 @@ this_file = "word_teacher_v1.2"
 log_file = "wt.log"
 log_separator = " ; "
 
-#colors = { 0:'\x1b[91m' , 1:'\x1b[94m', s: }
 class colors:
     lang = { 0:'\x1b[91m' , 1:'\x1b[94m' }
     std = '\033[0m'
@@ -20,10 +19,10 @@ class dizionario:
     strategy = [2,2,2,2,2]
     
     def __init__(self,theme):
-        #nonlocal self.data, self.theme
         self.theme = theme
         self.languages = theme.split("-")
-        self.languages = [ ( colors.lang[k] + self.languages[k] ) for k in range(2) ]
+        l = max( [len(self.languages[k]) for k in range(2) ] ) + 1
+        self.languages = [ ( colors.lang[k] + self.languages[k].ljust(l) ) for k in range(2) ]
         self.f_origin_name = self.theme + ".csv"
         self.f_data_name = "." + self.theme + ".wt"
         self.data = []
@@ -128,9 +127,9 @@ def testing(test_batch,from_diz):
                 number_words -= 1
             else :
                 p = random.randrange(2)
-                question = from_diz.languages[p] + ":\t" + from_diz.data[test_batch[k][0]][p]
+                question = from_diz.languages[p] + ": " + from_diz.data[test_batch[k][0]][p]
                 rightans = from_diz.data[test_batch[k][0]][not p]
-                answer = input( "\n" + question + "\n" + from_diz.languages[not p] + ":\t" )
+                answer = input( "\n" + question + "\n" + from_diz.languages[not p] + ": " )
                 write_log(question,from_diz.languages[not p] + ": " + rightans,answer)
                 if answer.strip() == rightans :
                     from_diz.data[test_batch[k][0]][2] += 1
