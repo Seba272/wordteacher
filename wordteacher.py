@@ -4,7 +4,7 @@ import random
 import json
 from os import path
 
-this_file = "word_teacher_v0.3"
+this_file = "word_teacher_v1.0"
 log_file = "wt.log"
 log_separator = " ; "
 diz_file="Suomi-English.csv"
