@@ -7,7 +7,7 @@ import os
 import sys 
 from tabulate import tabulate
 
-this_file = "word_teacher_v1.1"
+this_file = "word_teacher_v1.2"
 log_file = "wt.log"
 log_separator = " ; "
 
