@@ -8,7 +8,7 @@ import sys
 from tabulate import tabulate
 
 this_file = "word_teacher_v1.2"
-path_for_wt = "~/.wordteacher"
+path_for_wt = "/Users/lupo/.wordteacher/"
 log_file_name = path_for_wt + "wt.log"
 log_separator = " ; "
 
@@ -17,42 +17,88 @@ class colors:
     std = '\033[0m'
 
 class dizionario:
-    strategy = [2,2,2,2,2]
-    
-    def __init__(self,diz_name):
-        self.diz_name = diz_name
-        self.languages = diz_name.split("-")
-        l = max( [len(self.languages[k]) for k in range(2) ] ) + 1
-        self.languages = [ ( colors.lang[k] + self.languages[k].ljust(l) ) for k in range(2) ]
-        self.f_origin_name = path_for_wt + self.diz_name + ".csv"
-        self.f_data_name = path_for_wt + self.diz_name + ".wt"
-        self.data = []
-# [[0:lang0, 1:lang1, 2:number of positive tests, 3:number of negative tests, 4:date of inizialization, 5:date of last test],...]
-        if os.path.exists(self.f_data_name):
-            with open(self.f_data_name, "r") as f_data:
-                self.data = json.load(f_data)
-        elif os.path.exists(self.f_origin_name):
+    _properties = [ "strategy" , "languages" , "name" , "f_data_name" , "f_info_name" ]
+    strategy = []
+    languages = ["",""]
+    name = ""
+    f_data_name = ""
+    f_info_name = ""
+# [[0:lang0, 1:lang1, 2:number of positive tests, 3:number of negative tests, 4:date of inizialization, 5:date of last test],...] 
+    def __init__(self,diz_name_in):
+        if diz_name_in == "" :
+            print("Upload a new dictionary:")
+            self.f_origin_name = input("File containing the dictionary: ")
+            if not os.path.exists(self.f_origin_name):
+                print("File ",self.f_origin_name," not found.")
+                return None
+            self.data = []
             with open(self.f_origin_name,"r") as f_origin:
-                today = int(time.time())
-                for line in f_origin:
-                    if line[0]=="%":
-                        continue
-                    if line[0]=="!":
-                        continue
-                    a = line.split(";")
-                    a = [b.strip() for b in a]
-                    a.append(0) # 2: positive tests
-                    a.append(0) # 3: negative tests
-                    a.append(today) # 4: date of inizialization
-                    a.append(0) # 5: date of last test
-                    self.data.append(a)
+                    today = int(time.time())
+                    for line in f_origin:
+                        if line[0]=="%":
+                            continue
+                        if line[0]=="!":
+                            continue
+                        a = line.split(";")
+                        a = [b.strip() for b in a]
+                        a.append(0) # 2: positive tests
+                        a.append(0) # 3: negative tests
+                        a.append(today) # 4: date of inizialization
+                        a.append(0) # 5: date of last test
+                        self.data.append(a)
+            lang1 = input("Language 1: ")
+            lang2 = input("Language 2: ")
+            l = max( len(lang1) , len(lang2) ) + 1
+            self.languages = [ colors.lang[0] + lang1.ljust(l) , colors.lang[1] + lang2.ljust(l) ]
+            self.name = lang1 + "-" + lang2
+            self.f_data_name = path_for_wt + self.name + ".wt"
+            self.f_info_name = path_for_wt + self.name + ".info"
+            strat = input("Which strategy? (format: d1,d2,d3, ... ) ")
+            self.strategy = strat.split(",")
+            self.save_data()
         else:
-            print("No dictionary ",self.f_origin_name," found.\n Terminated.")
-            sys.exit("No dictionary found.")
+            self.f_info_name = path_for_wt + diz_name_in + ".info"
+            with open( self.f_info_name , "r") as f_info:
+                infos = json.load(f_info)
+                for p in self._properties:
+                    exec( "self." + p + "=" + str(infos[p]) )
+
+            with open( self.f_data_name , "r") as f_data:
+                self.data = json.load(f_data)
+
+#            self.diz_name = diz_name_in
+#            self.languages = diz_name.split("-")
+#            l = max( [len(self.languages[k]) for k in range(2) ] ) + 1
+#             self.languages = [ ( colors.lang[k] + self.languages[k].ljust(l) ) for k in range(2) ]
+#             self.f_origin_name = path_for_wt + self.diz_name + ".csv"
+#        if os.path.exists(self.f_data_name):
+#            with open(self.f_data_name, "r") as f_data:
+#                self.data = json.load(f_data)
+#        elif os.path.exists(self.f_origin_name):
+#            with open(self.f_origin_name,"r") as f_origin:
+#                today = int(time.time())
+#                for line in f_origin:
+#                    if line[0]=="%":
+#                        continue
+#                    if line[0]=="!":
+#                        continue
+#                    a = line.split(";")
+#                    a = [b.strip() for b in a]
+#                    a.append(0) # 2: positive tests
+#                    a.append(0) # 3: negative tests
+#                    a.append(today) # 4: date of inizialization
+#                    a.append(0) # 5: date of last test
+#                    self.data.append(a)
+#        else:
+#            print("No dictionary ",self.f_origin_name," found.\n Terminated.")
+#            sys.exit("No dictionary found.")
     
     def save_data(self):
         with open(self.f_data_name,"w") as f_data:
             json.dump(self.data,f_data)
+        with open(self.f_info_name,"w") as f_info:
+            infos = { p : eval("self."+ p) for p in self._properties }
+            json.dump(infos,f_info)
     
     # [[index in diz, how many repetitions],...]
     def make_batch_learn(self,n_words=5):
@@ -84,7 +130,7 @@ class dizionario:
         return batch
 
     def print_status(self):
-        print("Name of dictionary: ",self.diz_name)
+        print("Name of dictionary: ",self.name)
         print("File of origin: ",self.f_origin_name)
         print("Database: ",self.f_data_name)
         print("Number of words: ",len(self.data))
@@ -111,7 +157,7 @@ def write_log(string):
         log_file.write(log_separator)
         log_fifl.write(this_file)
         log_fifl.write(log_separator)
-        log_fifl.write(diz.diz_name)
+        log_fifl.write(diz.name)
         log_fifl.write(log_separator)
         log_fifl.write(string)
         log_fifl.write(" \n")
@@ -161,15 +207,19 @@ while 1:
     print("0. Upload a new dictionary")
     files = os.listdir(path_for_wt)
     dictionaries = []
-    for f in files:
-        a = f.split(path_for_wt)[-1]
-        if a == "wt" :
-            dictionaries.append(f)
     k = 1
-    for f in dictionaries:
-        ff = f.split(path_for_wt)[-2]
-        print(str(k)+". Use ",ff)
-        k+=1
+    for f in files:
+        ff = f.split(".")
+        if ff[-1] == "wt" :
+            dictionaries.append(ff[-2])
+            print( str(k)+". Use ", ff[-2] )
+            k+=1
+#
+#    k = 1
+#    for f in dictionaries:
+#        ff = f.split(".")[-2]
+#        print(str(k)+". Use ",ff)
+#        k+=1
     print("q. Exit")
     ans = input()
     if ans == "q" :
@@ -179,14 +229,17 @@ while 1:
     except ValueError :
         print("There is not such option.")
         continue
-    if ans == 0:
-        diz_name = input("Which diz_name?")
+    if ans == 0 :
+        diz_name_in = "" # input("Which diz_name?")
     elif ans <= len(dictionaries) :
-        diz_name = dictionaries[ans-1].split(".")[-2]
+        diz_name_in = dictionaries[ans-1]
     else :
-        print("There is not such option.")
+        print("There is not such an option.")
         continue
-    diz = dizionario(diz_name)
+    diz = dizionario(diz_name_in)
+    if diz.name == "" :
+        print("Something went wrong. Try again!")
+        continue
     while 1:
         print("What do you want to do?")
         print("1. Go on with learning")
