@@ -8,7 +8,8 @@ import sys
 from tabulate import tabulate
 
 this_file = "word_teacher_v1.2"
-log_file = "wt.log"
+path_for_wt = "~/.wordteacher"
+log_file_name = path_for_wt + "wt.log"
 log_separator = " ; "
 
 class colors:
@@ -18,13 +19,13 @@ class colors:
 class dizionario:
     strategy = [2,2,2,2,2]
     
-    def __init__(self,theme):
-        self.theme = theme
-        self.languages = theme.split("-")
+    def __init__(self,diz_name):
+        self.diz_name = diz_name
+        self.languages = diz_name.split("-")
         l = max( [len(self.languages[k]) for k in range(2) ] ) + 1
         self.languages = [ ( colors.lang[k] + self.languages[k].ljust(l) ) for k in range(2) ]
-        self.f_origin_name = self.theme + ".csv"
-        self.f_data_name = "." + self.theme + ".wt"
+        self.f_origin_name = path_for_wt + self.diz_name + ".csv"
+        self.f_data_name = path_for_wt + self.diz_name + ".wt"
         self.data = []
 # [[0:lang0, 1:lang1, 2:number of positive tests, 3:number of negative tests, 4:date of inizialization, 5:date of last test],...]
         if os.path.exists(self.f_data_name):
@@ -83,7 +84,7 @@ class dizionario:
         return batch
 
     def print_status(self):
-        print("Name of dictionary: ",self.theme)
+        print("Name of dictionary: ",self.diz_name)
         print("File of origin: ",self.f_origin_name)
         print("Database: ",self.f_data_name)
         print("Number of words: ",len(self.data))
@@ -105,15 +106,15 @@ class dizionario:
                 f_status.write(tabulate(table,header))
 
 def write_log(string):
-    with open(log_file,"a") as fl:
-        fl.write(format(time.time().__int__(),"x"))
-        fl.write(log_separator)
-        fl.write(this_file)
-        fl.write(log_separator)
-        fl.write(diz.theme)
-        fl.write(log_separator)
-        fl.write(string)
-        fl.write(" \n")
+    with open(log_file_name,"a") as log_file:
+        log_file.write(format(time.time().__int__(),"x"))
+        log_file.write(log_separator)
+        log_fifl.write(this_file)
+        log_fifl.write(log_separator)
+        log_fifl.write(diz.diz_name)
+        log_fifl.write(log_separator)
+        log_fifl.write(string)
+        log_fifl.write(" \n")
 
 def testing(test_batch,from_diz):
     number_words = len(test_batch)
@@ -158,15 +159,15 @@ def repeat():
 while 1:
     print("What do you want to do?")
     print("0. Upload a new dictionary")
-    files = os.listdir(".")
+    files = os.listdir(path_for_wt)
     dictionaries = []
     for f in files:
-        a = f.split(".")[-1]
+        a = f.split(path_for_wt)[-1]
         if a == "wt" :
             dictionaries.append(f)
     k = 1
     for f in dictionaries:
-        ff = f.split(".")[-2]
+        ff = f.split(path_for_wt)[-2]
         print(str(k)+". Use ",ff)
         k+=1
     print("q. Exit")
@@ -179,13 +180,13 @@ while 1:
         print("There is not such option.")
         continue
     if ans == 0:
-        theme = input("Which theme?")
+        diz_name = input("Which diz_name?")
     elif ans <= len(dictionaries) :
-        theme = dictionaries[ans-1].split(".")[-2]
+        diz_name = dictionaries[ans-1].split(".")[-2]
     else :
         print("There is not such option.")
         continue
-    diz = dizionario(theme)
+    diz = dizionario(diz_name)
     while 1:
         print("What do you want to do?")
         print("1. Go on with learning")
