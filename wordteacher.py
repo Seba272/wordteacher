@@ -59,7 +59,7 @@ class dizionario:
             self.strategy = strat.split(",")
             self.birth_date = int(time.time())
             self.save_data()
-            write_log( "New dictionary opened: ", self.name )
+            write_log( "New dictionary opened: " + self.name )
         else:
             self.f_info_name = path_for_wt + diz_name_in + ".info"
             with open( self.f_info_name , "r") as f_info:
@@ -72,7 +72,7 @@ class dizionario:
                 self.birth_date = int(infos["birth_date"])
             with open( self.f_data_name , "r") as f_data:
                 self.data = json.load(f_data)
-            write_log( "Existing dictionary opened: ", self.name )
+            write_log( "Existing dictionary opened: " + self.name )
 
     def save_data(self):
         with open(self.f_data_name,"w") as f_data:
