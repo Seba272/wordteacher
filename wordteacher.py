@@ -85,7 +85,7 @@ class dizionario:
         else :
             print("Something went wrong: this word shouldn't be changed.")
             sys.exit()
-        newword = input("What is the translation of " + self.data[word][not p] + " in " + colors.lang[p] + self.languages[p] + colors.std + "? ")
+        newword = input("What is the translation of " + colors.lang[not p] + self.data[word][not p] + colors.std + " in " + colors.lang[p] + self.languages[p] + colors.std + "? ")
         self.data[word][p] = newword
 
     def save_data(self):
@@ -192,7 +192,7 @@ def testing(test_batch,from_diz,log_string):
                 if from_diz.data[test_batch[k][0]][4] == 0 :
                     from_diz.data[test_batch[k][0]][4] = int(time.time())
                 from_diz.data[test_batch[k][0]][5] = int(time.time())
-                write_log( from_diz.name , log_string +": "+ question + log_separator + rightans + log_separator + answer)
+                write_log( from_diz.name , log_string + log_separator + question + log_separator + rightans + log_separator + answer)
                 if answer.strip() == rightans :
                     from_diz.data[test_batch[k][0]][2] += 1
                     test_batch[k][1] -= 1
