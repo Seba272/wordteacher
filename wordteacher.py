@@ -102,7 +102,7 @@ class dizionario:
             else :
                 word_days = max(int((today/86400 - self.data[w][4]/86400)),0)
             word_level = self.data[w][2] - self.data[w][3]
-            if word_days <= strat_days and word_level < sum([self.strategy[j] for j in range(word_days+1)]) :
+            if word_days <= strat_days : #and word_level < sum([self.strategy[j] for j in range(word_days+1)]) :
                 batch.append([w,self.strategy[word_days]])
             if len(batch) >= n_words :
                 break
@@ -158,7 +158,7 @@ def write_log(name,string):
         log_file.write(string)
         log_file.write(" \n")
 
-def testing(test_batch,from_diz):
+def testing(test_batch,from_diz,log_string):
     number_words = len(test_batch)
     try:
         while number_words > 0 :
@@ -174,7 +174,7 @@ def testing(test_batch,from_diz):
                 if from_diz.data[test_batch[k][0]][4] == 0 :
                     from_diz.data[test_batch[k][0]][4] = int(time.time())
                 from_diz.data[test_batch[k][0]][5] = int(time.time())
-                write_log( from_diz.name , from_diz.data[test_batch[k][0]][p] + log_separator + from_diz.data[test_batch[k][0]][not p] + log_separator + answer)
+                write_log( from_diz.name , log_string +": "+ from_diz.data[test_batch[k][0]][p] + log_separator + from_diz.data[test_batch[k][0]][not p] + log_separator + answer)
                 if answer.strip() == rightans :
                     from_diz.data[test_batch[k][0]][2] += 1
                     test_batch[k][1] -= 1
@@ -187,16 +187,16 @@ def testing(test_batch,from_diz):
         pass
     print(colors.std)
 
-def learn():
+def learn(diz):
     length_batch = int(input("How many words? "))
     test_batch = diz.make_batch_learn(length_batch)
-    testing(test_batch,diz)
+    testing(test_batch,diz,"learn")
     diz.save_data()
 
-def repeat():
+def repeat(diz):
     length_batch = int(input("How many words? "))
     test_batch = diz.make_batch_repeat(length_batch)
-    testing(test_batch,diz)
+    testing(test_batch,diz,"repeat")
     diz.save_data()
 
 # Menu
@@ -243,9 +243,9 @@ while 1:
         if ans == "q":
             break
         elif ans == "1":
-            learn()
+            learn(diz)
         elif ans == "2":
-            repeat()
+            repeat(diz)
         elif ans == "3":
             diz.print_status()
         else:
