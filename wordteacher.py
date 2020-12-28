@@ -7,7 +7,7 @@ import os
 import sys 
 from tabulate import tabulate
 
-version = "v1.2"
+version = "v2"
 this_file = "word_teacher_"+version
 path_for_wt = "/Users/lupo/.wordteacher/"
 log_file_name = path_for_wt + "wt.log"
