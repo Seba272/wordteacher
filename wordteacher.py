@@ -7,7 +7,7 @@ import os
 import sys 
 from tabulate import tabulate
 
-version = "v2.1-dev"
+version = "v2.2-dev"
 this_file = "word_teacher_"+version
 #path_for_wt = "/Users/lupo/.wordteacher/"
 path_for_wt = "/Users/lupo/.wordteacher/dev-datafolder/"
@@ -113,11 +113,10 @@ class dizionario:
         batch = []
         words_active = []
         for w in range(len(self.data)) :
-            word_touched = self.data[w][2] + self.data[w][3]
-            word_level = self.data[w][2] - self.data[w][3]
-            if word_touched != 0 :
+            if self.data[w][2] :
+                word_level = self.data[w][3] / self.data[w][2] # value between 0 and 1: the lower the better. We test the ones with largest value.
                 words_active.append([w,word_level])
-        words_active.sort(key = lambda k: k[1])
+        words_active.sort(key = lambda k: k[1],reverse=True)
         n_words = min(n_words, len(words_active))
         batch = [[words_active[k][0],2] for k in range(n_words)]
         return batch
@@ -133,7 +132,7 @@ class dizionario:
         yn = input("Do you want a printout of the whole dictionary? ")
         if yn[0] == "y" :
             f_status_name = input("Where? ")
-            header = [self.languages[0][5:],self.languages[1][5:],"Tests","Level","First test","Last test"]
+            header = [self.languages[0][5:],self.languages[1][5:],"Tests","Level","Level","First test","Last test"]
             table = []
             for word in self.data :
                 table.append([\
@@ -141,6 +140,7 @@ class dizionario:
                         word[1],\
                         word[2]+word[3],\
                         word[2]-word[3],\
+                        word[3]/max(word[2],1),\
                         time.strftime("%Y/%m/%d %H:%M:%S",time.localtime(word[4])),\
                         time.strftime("%Y/%m/%d %H:%M:%S",time.localtime(word[5]))\
                         ])
