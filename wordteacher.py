@@ -10,7 +10,7 @@ from tabulate import tabulate
 version = "v2.1-dev"
 this_file = "word_teacher_"+version
 #path_for_wt = "/Users/lupo/.wordteacher/"
-path_for_wt = "/Users/lupo/.wordteacher/dev-datafolder"
+path_for_wt = "/Users/lupo/.wordteacher/dev-datafolder/"
 log_file_name = path_for_wt + "wt.log"
 log_separator = " ; "
 
@@ -57,7 +57,8 @@ class dizionario:
             self.f_data_name = path_for_wt + self.name + ".wt"
             self.f_info_name = path_for_wt + self.name + ".info"
             strat = input("Which strategy? (format: d1,d2,d3, ... ) ")
-            self.strategy = strat.split(",")
+            strat = strat.split(",")
+            self.strategy = [int(p) for p in strat]
             self.birth_date = int(time.time())
             self.save_data()
             write_log( self.name , "New dictionary opened: " + self.name )
@@ -96,13 +97,15 @@ class dizionario:
         strat_repetitions = max(self.strategy)
         strat_days = len(self.strategy)
         for w in range(len(self.data)) :
-            word_days = max(int((today/86400 - self.data[w][4]/86400)),0)
+            if self.data[w][4] == 0 :
+                word_days = 0
+            else :
+                word_days = max(int((today/86400 - self.data[w][4]/86400)),0)
             word_level = self.data[w][2] - self.data[w][3]
-            if word_days < strat_days and word_level < sum([self.strategy[j] for j in range(word_days+1)]) :
+            if word_days <= strat_days and word_level < sum([self.strategy[j] for j in range(word_days+1)]) :
                 batch.append([w,self.strategy[word_days]])
             if len(batch) >= n_words :
                 break
-    #    print("choose_batch: a:\n",a)
         return batch
 
     # [[index in diz, how many repetitions],...]
@@ -115,22 +118,22 @@ class dizionario:
             if word_touched != 0 :
                 words_active.append([w,word_level])
         words_active.sort(key = lambda k: k[1])
+        n_words = min(n_words, len(words_active))
         batch = [[words_active[k][0],2] for k in range(n_words)]
         return batch
 
     def print_status(self):
         print("Name of dictionary: ",self.name)
-        print("File of origin: ",self.f_origin_name)
         print("Database: ",self.f_data_name)
         print("Number of words: ",len(self.data))
         learned_words = 0
         for w in self.data :
-            learned_words += ( self.data[w][2] + self.data[w][3] != 0 )
+            learned_words += ( w[4] != 0 )
         print("Number of words in the learning process: ",learned_words)
         yn = input("Do you want a printout of the whole dictionary? ")
         if yn[0] == "y" :
-            f_status_name = input("Where?")
-            header = [self.languages[0],self.languages[1],"Tests","Level","When uploaded","Last tested"]
+            f_status_name = input("Where? ")
+            header = [self.languages[0][5:],self.languages[1][5:],"Tests","Level","First test","Last test"]
             table = []
             for word in self.data :
                 table.append([\
@@ -168,6 +171,9 @@ def testing(test_batch,from_diz):
                 question = from_diz.languages[p] + ": " + from_diz.data[test_batch[k][0]][p]
                 rightans = from_diz.data[test_batch[k][0]][not p]
                 answer = input( "\n" + question + "\n" + from_diz.languages[not p] + ": " )
+                if from_diz.data[test_batch[k][0]][4] == 0 :
+                    from_diz.data[test_batch[k][0]][4] = int(time.time())
+                from_diz.data[test_batch[k][0]][5] = int(time.time())
                 write_log( from_diz.name , from_diz.data[test_batch[k][0]][p] + log_separator + from_diz.data[test_batch[k][0]][not p] + log_separator + answer)
                 if answer.strip() == rightans :
                     from_diz.data[test_batch[k][0]][2] += 1
@@ -176,7 +182,6 @@ def testing(test_batch,from_diz):
                     from_diz.data[test_batch[k][0]][3] += 1
                     test_batch[k][1] += 1
                     print(colors.std + "No, the right answer is: ", rightans)
-                from_diz.data[test_batch[k][0]][5] = int(time.time())
     except KeyboardInterrupt:
         print(colors.std)
         pass
@@ -195,8 +200,8 @@ def repeat():
     diz.save_data()
 
 # Menu
+print("== Word Teacher ",version," ==")
 while 1:
-    print("Word Teacher ",version)
     print("What do you want to do?")
     print("0. Upload a new dictionary")
     files = os.listdir(path_for_wt)
