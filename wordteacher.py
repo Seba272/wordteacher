@@ -147,12 +147,12 @@ def write_log(string):
     with open(log_file_name,"a") as log_file:
         log_file.write(format(time.time().__int__(),"x"))
         log_file.write(log_separator)
-        log_fifl.write(this_file)
-        log_fifl.write(log_separator)
-        log_fifl.write(diz.name)
-        log_fifl.write(log_separator)
-        log_fifl.write(string)
-        log_fifl.write(" \n")
+        log_file.write(this_file)
+        log_file.write(log_separator)
+        log_file.write(diz.name)
+        log_file.write(log_separator)
+        log_file.write(string)
+        log_file.write(" \n")
 
 def testing(test_batch,from_diz):
     number_words = len(test_batch)
