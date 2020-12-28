@@ -44,7 +44,7 @@ class dizionario:
                         a = [b.strip() for b in a]
                         a.append(0) # 2: positive tests
                         a.append(0) # 3: negative tests
-                        a.append(today) # 4: date of inizialization
+                        a.append(0) # 4: date of first learning
                         a.append(0) # 5: date of last test
                         self.data.append(a)
             lang1 = input("Language 1: ")
@@ -58,6 +58,7 @@ class dizionario:
             self.strategy = strat.split(",")
             self.birth_date = int(time.time())
             self.save_data()
+            write_log( "New dictionary opened: ", self.name )
         else:
             self.f_info_name = path_for_wt + diz_name_in + ".info"
             with open( self.f_info_name , "r") as f_info:
@@ -70,6 +71,7 @@ class dizionario:
                 self.birth_date = int(infos["birth_date"])
             with open( self.f_data_name , "r") as f_data:
                 self.data = json.load(f_data)
+            write_log( "Existing dictionary opened: ", self.name )
 
     def save_data(self):
         with open(self.f_data_name,"w") as f_data:
@@ -92,7 +94,7 @@ class dizionario:
         strat_repetitions = max(self.strategy)
         strat_days = len(self.strategy)
         for w in range(len(self.data)) :
-            word_days = max(int((self.data[w][5]-today)/86400),0)
+            word_days = max(int((today/86400 - self.data[w][4]/86400)),0)
             word_level = self.data[w][2] - self.data[w][3]
             if word_days < strat_days and word_level < sum([self.strategy[j] for j in range(word_days+1)]) :
                 batch.append([w,self.strategy[word_days]])
@@ -119,8 +121,12 @@ class dizionario:
         print("File of origin: ",self.f_origin_name)
         print("Database: ",self.f_data_name)
         print("Number of words: ",len(self.data))
+        learned_words = 0
+        for w in self.data :
+            learned_words += ( self.data[w][2] + self.data[w][3] != 0 )
+        print("Number of words in the learning process: ",learned_words)
         yn = input("Do you want a printout of the whole dictionary? ")
-        if yn == "y" or yn == "yes" :
+        if yn[0] == "y" :
             f_status_name = input("Where?")
             header = [self.languages[0],self.languages[1],"Tests","Level","When uploaded","Last tested"]
             table = []
@@ -199,12 +205,6 @@ while 1:
             dictionaries.append(ff[-2])
             print( str(k)+". Use ", ff[-2] )
             k+=1
-#
-#    k = 1
-#    for f in dictionaries:
-#        ff = f.split(".")[-2]
-#        print(str(k)+". Use ",ff)
-#        k+=1
     print("q. Exit")
     ans = input()
     if ans == "q" :
