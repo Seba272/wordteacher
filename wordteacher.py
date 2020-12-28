@@ -192,7 +192,7 @@ def testing(test_batch,from_diz,log_string):
                 if from_diz.data[test_batch[k][0]][4] == 0 :
                     from_diz.data[test_batch[k][0]][4] = int(time.time())
                 from_diz.data[test_batch[k][0]][5] = int(time.time())
-                write_log( from_diz.name , log_string +": "+ question + log_separator + rightans + log_separator + answer)
+                write_log( from_diz.name , log_string + log_separator + question + log_separator + rightans + log_separator + answer)
                 if answer.strip() == rightans :
                     from_diz.data[test_batch[k][0]][2] += 1
                     test_batch[k][1] -= 1
