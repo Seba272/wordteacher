@@ -53,7 +53,8 @@ class dizionario:
             lang2 = input("Language 2: ")
             l = max( len(lang1) , len(lang2) ) + 1
             self.languages = [ colors.lang[0] + lang1.ljust(l) , colors.lang[1] + lang2.ljust(l) ]
-            self.name = lang1 + "-" + lang2
+#            self.name = lang1 + "-" + lang2
+            self.name = input("What name do you give to this dictionary? (no spaces) ")
             self.f_data_name = path_for_wt + self.name + ".wt"
             self.f_info_name = path_for_wt + self.name + ".info"
             strat = input("Which strategy? (format: d1,d2,d3, ... ) ")
