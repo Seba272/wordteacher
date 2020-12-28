@@ -23,7 +23,7 @@ class dizionario:
 # [[0:lang0, 1:lang1, 2:number of positive tests, 3:number of negative tests, 4:date of inizialization, 5:date of last test],...] 
     def __init__(self,diz_name_in):
         name = "" # Name of dictionary 
-        languages = ["",""] # The two languages, padded and colored for display
+        languages = ["",""] # The two languages, padded for display
         strategy = [] # Learning strategy: d1, d2, ... means d1 repetitions first day, d2 the second one...
         f_data_name = "" # path to the file containing the dictionary
         f_info_name = "" # path to the file containing these properties
@@ -52,7 +52,7 @@ class dizionario:
             lang1 = input("Language 1: ")
             lang2 = input("Language 2: ")
             l = max( len(lang1) , len(lang2) ) + 1
-            self.languages = [ colors.lang[0] + lang1.ljust(l) , colors.lang[1] + lang2.ljust(l) ]
+            self.languages = [ lang1.ljust(l) , lang2.ljust(l) ]
 #            self.name = lang1 + "-" + lang2
             self.name = input("What name do you give to this dictionary? (no spaces) ")
             self.f_data_name = path_for_wt + self.name + ".wt"
@@ -76,6 +76,17 @@ class dizionario:
             with open( self.f_data_name , "r") as f_data:
                 self.data = json.load(f_data)
             write_log( self.name , "Existing dictionary opened: " + self.name )
+    
+    def add_word(self,word):
+        if self.data[word][0] == "" :
+            p = 0 
+        elif self.data[word][1] == "" :
+            p = 1
+        else :
+            print("Something went wrong: this word shouldn't be changed.")
+            sys.exit()
+        newword = input("What is the translation of " + self.data[word][not p] + " in " + colors.lang[p] + self.languages[p] + colors.std + "? ")
+        self.data[word][p] = newword
 
     def save_data(self):
         with open(self.f_data_name,"w") as f_data:
@@ -133,7 +144,7 @@ class dizionario:
         yn = input("Do you want a printout of the whole dictionary? ")
         if yn[0] == "y" :
             f_status_name = input("Where? ")
-            header = [self.languages[0][5:],self.languages[1][5:],"Tests","Level","Level","First test","Last test"]
+            header = [self.languages[0], self.languages[1],"Tests","Level","Level","First test","Last test"]
             table = []
             for word in self.data :
                 table.append([\
@@ -168,14 +179,20 @@ def testing(test_batch,from_diz,log_string):
                 test_batch.pop(k)
                 number_words -= 1
             else :
+                if from_diz.data[test_batch[k][0]][0] == "" or from_diz.data[test_batch[k][0]][1] == "" :
+                    from_diz.add_word(test_batch[k][0])
                 p = random.randrange(2)
-                question = from_diz.languages[p] + ": " + from_diz.data[test_batch[k][0]][p]
+                question = from_diz.data[test_batch[k][0]][p]
                 rightans = from_diz.data[test_batch[k][0]][not p]
-                answer = input( "\n" + question + "\n" + from_diz.languages[not p] + ": " )
+                answer = input( \
+                        colors.lang[p] + from_diz.languages[p] + ": " \
+                        + question + "\n"\
+                        + colors.lang[not p] + from_diz.languages[not p] + ": ")
+                print(colors.std)
                 if from_diz.data[test_batch[k][0]][4] == 0 :
                     from_diz.data[test_batch[k][0]][4] = int(time.time())
                 from_diz.data[test_batch[k][0]][5] = int(time.time())
-                write_log( from_diz.name , log_string +": "+ from_diz.data[test_batch[k][0]][p] + log_separator + from_diz.data[test_batch[k][0]][not p] + log_separator + answer)
+                write_log( from_diz.name , log_string +": "+ question + log_separator + rightans + log_separator + answer)
                 if answer.strip() == rightans :
                     from_diz.data[test_batch[k][0]][2] += 1
                     test_batch[k][1] -= 1
