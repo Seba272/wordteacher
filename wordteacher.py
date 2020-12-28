@@ -59,7 +59,7 @@ class dizionario:
             self.strategy = strat.split(",")
             self.birth_date = int(time.time())
             self.save_data()
-            write_log( "New dictionary opened: " + self.name )
+            write_log( self.name , "New dictionary opened: " + self.name )
         else:
             self.f_info_name = path_for_wt + diz_name_in + ".info"
             with open( self.f_info_name , "r") as f_info:
@@ -72,7 +72,7 @@ class dizionario:
                 self.birth_date = int(infos["birth_date"])
             with open( self.f_data_name , "r") as f_data:
                 self.data = json.load(f_data)
-            write_log( "Existing dictionary opened: " + self.name )
+            write_log( self.name , "Existing dictionary opened: " + self.name )
 
     def save_data(self):
         with open(self.f_data_name,"w") as f_data:
@@ -143,13 +143,13 @@ class dizionario:
             with open(f_status_name,"w") as f_status :
                 f_status.write(tabulate(table,header))
 
-def write_log(string):
+def write_log(name,string):
     with open(log_file_name,"a") as log_file:
         log_file.write(format(time.time().__int__(),"x"))
         log_file.write(log_separator)
         log_file.write(this_file)
         log_file.write(log_separator)
-        log_file.write(diz.name)
+        log_file.write(name)
         log_file.write(log_separator)
         log_file.write(string)
         log_file.write(" \n")
@@ -167,7 +167,7 @@ def testing(test_batch,from_diz):
                 question = from_diz.languages[p] + ": " + from_diz.data[test_batch[k][0]][p]
                 rightans = from_diz.data[test_batch[k][0]][not p]
                 answer = input( "\n" + question + "\n" + from_diz.languages[not p] + ": " )
-                write_log(from_diz.data[test_batch[k][0]][p] + log_separator + from_diz.data[test_batch[k][0]][not p] + log_separator + answer)
+                write_log( from_diz.name , from_diz.data[test_batch[k][0]][p] + log_separator + from_diz.data[test_batch[k][0]][not p] + log_separator + answer)
                 if answer.strip() == rightans :
                     from_diz.data[test_batch[k][0]][2] += 1
                     test_batch[k][1] -= 1
