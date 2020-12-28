@@ -85,7 +85,7 @@ class dizionario:
         else :
             print("Something went wrong: this word shouldn't be changed.")
             sys.exit()
-        newword = input("What is the translation of " + self.data[word][not p] + " in " + colors.lang[p] + self.languages[p] + colors.std + "? ")
+        newword = input("What is the translation of " + colors.lang[not p] + self.data[word][not p] + colors.std + " in " + colors.lang[p] + self.languages[p] + colors.std + "? ")
         self.data[word][p] = newword
 
     def save_data(self):
