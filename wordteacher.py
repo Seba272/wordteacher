@@ -9,7 +9,7 @@ from tabulate import tabulate
 
 version = "v2-dev"
 this_file = "word_teacher_"+version
-path_for_wt = "/Users/lupo/.wordteacher/"
+path_for_wt = "/Users/lupo/.wordteacher/dev-datafolder/"
 log_file_name = path_for_wt + "wt.log"
 log_separator = " ; "
 
