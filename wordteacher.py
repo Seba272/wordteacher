@@ -7,7 +7,8 @@ import os
 import sys 
 from tabulate import tabulate
 
-this_file = "word_teacher_v1.2"
+version = "v1.2"
+this_file = "word_teacher_"+version
 path_for_wt = "/Users/lupo/.wordteacher/"
 log_file_name = path_for_wt + "wt.log"
 log_separator = " ; "
@@ -194,6 +195,7 @@ def repeat():
 
 # Menu
 while 1:
+    print("Word Teacher ",version)
     print("What do you want to do?")
     print("0. Upload a new dictionary")
     files = os.listdir(path_for_wt)
