@@ -17,17 +17,18 @@ class colors:
     std = '\033[0m'
 
 class dizionario:
-    _properties = [ "strategy" , "languages" , "name" , "f_data_name" , "f_info_name" ]
-    strategy = []
-    languages = ["",""]
-    name = ""
-    f_data_name = ""
-    f_info_name = ""
+    #_properties = [ "strategy" , "languages" , "name" , "f_data_name" , "f_info_name" ]
 # [[0:lang0, 1:lang1, 2:number of positive tests, 3:number of negative tests, 4:date of inizialization, 5:date of last test],...] 
     def __init__(self,diz_name_in):
+        name = "" # Name of dictionary 
+        languages = ["",""] # The two languages, padded and colored for display
+        strategy = [] # Learning strategy: d1, d2, ... means d1 repetitions first day, d2 the second one...
+        f_data_name = "" # path to the file containing the dictionary
+        f_info_name = "" # path to the file containing these properties
+        birth_date = "" # date of creation of the dictionary
         if diz_name_in == "" :
             print("Upload a new dictionary:")
-            self.f_origin_name = input("File containing the dictionary: ")
+            self.f_origin_name = input("File containing the dictionary: ").strip()
             if not os.path.exists(self.f_origin_name):
                 print("File ",self.f_origin_name," not found.")
                 return None
@@ -55,49 +56,33 @@ class dizionario:
             self.f_info_name = path_for_wt + self.name + ".info"
             strat = input("Which strategy? (format: d1,d2,d3, ... ) ")
             self.strategy = strat.split(",")
+            self.birth_date = int(time.time())
             self.save_data()
         else:
             self.f_info_name = path_for_wt + diz_name_in + ".info"
             with open( self.f_info_name , "r") as f_info:
                 infos = json.load(f_info)
-                for p in self._properties:
-                    exec( "self." + p + "=" + str(infos[p]) )
-
+                self.name = infos["name"]
+                self.languages = infos["languages"]
+                self.strategy = infos["strategy"]
+                self.f_data_name = infos["f_data_name"]
+                self.f_info_name = infos["f_info_name"]
+                self.birth_date = int(infos["birth_date"])
             with open( self.f_data_name , "r") as f_data:
                 self.data = json.load(f_data)
 
-#            self.diz_name = diz_name_in
-#            self.languages = diz_name.split("-")
-#            l = max( [len(self.languages[k]) for k in range(2) ] ) + 1
-#             self.languages = [ ( colors.lang[k] + self.languages[k].ljust(l) ) for k in range(2) ]
-#             self.f_origin_name = path_for_wt + self.diz_name + ".csv"
-#        if os.path.exists(self.f_data_name):
-#            with open(self.f_data_name, "r") as f_data:
-#                self.data = json.load(f_data)
-#        elif os.path.exists(self.f_origin_name):
-#            with open(self.f_origin_name,"r") as f_origin:
-#                today = int(time.time())
-#                for line in f_origin:
-#                    if line[0]=="%":
-#                        continue
-#                    if line[0]=="!":
-#                        continue
-#                    a = line.split(";")
-#                    a = [b.strip() for b in a]
-#                    a.append(0) # 2: positive tests
-#                    a.append(0) # 3: negative tests
-#                    a.append(today) # 4: date of inizialization
-#                    a.append(0) # 5: date of last test
-#                    self.data.append(a)
-#        else:
-#            print("No dictionary ",self.f_origin_name," found.\n Terminated.")
-#            sys.exit("No dictionary found.")
-    
     def save_data(self):
         with open(self.f_data_name,"w") as f_data:
             json.dump(self.data,f_data)
         with open(self.f_info_name,"w") as f_info:
-            infos = { p : eval("self."+ p) for p in self._properties }
+            infos = { \
+                    "name" : self.name , \
+                    "languages" : self.languages , \
+                    "strategy" : self.strategy , \
+                    "f_data_name" : self.f_data_name , \
+                    "f_info_name" : self.f_info_name , \
+                    "birth_date" : self.birth_date \
+                    }
             json.dump(infos,f_info)
     
     # [[index in diz, how many repetitions],...]
