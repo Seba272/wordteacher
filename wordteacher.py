@@ -7,7 +7,7 @@ import os
 import sys 
 from tabulate import tabulate
 
-version = "v2.2-dev"
+version = "v2.3-dev"
 this_file = "word_teacher_"+version
 #path_for_wt = "/Users/lupo/.wordteacher/"
 path_for_wt = "/Users/lupo/.wordteacher/dev-datafolder/"
