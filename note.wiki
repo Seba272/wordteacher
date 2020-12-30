@@ -23,6 +23,10 @@ La funzione log potrebbe essere messa in una classe.
 * [X] Make options depend on dictionary
 * [X] Make a better relation between theme and languages (for instance, use different levels for same languages)
 * [X] Choose a good strategy (although it will be then optional)
+* [ ] Make of it a package that can be used in 'iPython'. For instance, it could be possible to make personalized batch tests. Maybe, with also the option to use the log. Or make a global history as another file.
+* [ ] Make the printout better
+* [ ] Add categories to words.
+* [ ] Add checks of version: format of files can change between versions and this can make crashes.
 
 == Cose da sistemare: ==
 * [X] Quando si ripetono le parole, 10 per esempio, vengono scelte quelle in cui si è sbagliato di più, e poi le altre, ma sempre partendo dall'ordine in cui sono nel dizionario. Quindi si finisce per ripetere sempre le prime parole del dizionario: bisogna introdurre un mescolamento.
