@@ -85,7 +85,7 @@ class dizionario:
         else :
             print("Something went wrong: this word shouldn't be changed.")
             sys.exit()
-        newword = input("What is the translation of " + colors.lang[not p] + self.data[word][not p] + colors.std + " in " + colors.lang[p] + self.languages[p] + colors.std + "? ")
+        newword = input(colors.std + "What is the translation of " + colors.lang[not p] + self.data[word][not p] + colors.std + " in " + colors.lang[p] + self.languages[p] + colors.std + "? ")
         self.data[word][p] = newword
 
     def save_data(self):
@@ -129,8 +129,18 @@ class dizionario:
                 word_level = self.data[w][3] / self.data[w][2] # value between 0 and 1: the lower the better. We test the ones with largest value.
                 words_active.append([w,word_level])
         words_active.sort(key = lambda k: k[1],reverse=True)
+        list_by_level = []
+        k = -1
+        for j in range(len(words_active)) :
+            if words_active[j][1] != words_active[j-1][1] :
+                k = k+1
+                list_by_level.append([])
+            list_by_level[k].append(j)
+        for w in list_by_level :
+            random.shuffle(w)
+        words_active_shuffled = [words_active[c] for b in list_by_level for c in b]
         n_words = min(n_words, len(words_active))
-        batch = [[words_active[k][0],2] for k in range(n_words)]
+        batch = [[words_active_shuffled[k][0],2] for k in range(n_words)]
         return batch
 
     def print_status(self):
@@ -170,7 +180,7 @@ def write_log(name,string):
         log_file.write(string)
         log_file.write(" \n")
 
-def testing(test_batch,from_diz,log_string):
+def testing(test_batch,from_diz,log_string,strat_or_not):
     number_words = len(test_batch)
     try:
         while number_words > 0 :
@@ -184,14 +194,14 @@ def testing(test_batch,from_diz,log_string):
                 p = random.randrange(2)
                 question = from_diz.data[test_batch[k][0]][p]
                 rightans = from_diz.data[test_batch[k][0]][not p]
-                answer = input( \
-                        colors.lang[p] + from_diz.languages[p] + ": " \
+                answer = input( "\n" \
+                        + colors.lang[p] + from_diz.languages[p] + ": " \
                         + question + "\n"\
                         + colors.lang[not p] + from_diz.languages[not p] + ": ")
-                print(colors.std)
                 if from_diz.data[test_batch[k][0]][4] == 0 :
                     from_diz.data[test_batch[k][0]][4] = int(time.time())
-                from_diz.data[test_batch[k][0]][5] = int(time.time())
+                if strat_or_not :
+                    from_diz.data[test_batch[k][0]][5] = int(time.time())
                 write_log( from_diz.name , log_string + log_separator + question + log_separator + rightans + log_separator + answer)
                 if answer.strip() == rightans :
                     from_diz.data[test_batch[k][0]][2] += 1
@@ -208,13 +218,13 @@ def testing(test_batch,from_diz,log_string):
 def learn(diz):
     length_batch = int(input("How many words? "))
     test_batch = diz.make_batch_learn(length_batch)
-    testing(test_batch,diz,"learn")
+    testing(test_batch,diz,"learn",True)
     diz.save_data()
 
 def repeat(diz):
     length_batch = int(input("How many words? "))
     test_batch = diz.make_batch_repeat(length_batch)
-    testing(test_batch,diz,"repeat")
+    testing(test_batch,diz,"repeat",False)
     diz.save_data()
 
 # Menu

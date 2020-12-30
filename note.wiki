@@ -19,11 +19,11 @@ La funzione log potrebbe essere messa in una classe.
 - 
 == ToDo ==
 * [ ] Make of it a program in bin
-* [ ] Make better format for printout
-* [ ] Make options depend on dictionary
-* [ ] Make a better relation between theme and languages (for instance, use different levels for same languages)
-* [ ] Choose a good strategy (although it will be then optional)
+* [X] Make better format for printout
+* [X] Make options depend on dictionary
+* [X] Make a better relation between theme and languages (for instance, use different levels for same languages)
+* [X] Choose a good strategy (although it will be then optional)
 
 == Cose da sistemare: ==
-* [ ] Quando si ripetono le parole, 10 per esempio, vengono scelte quelle in cui si è sbagliato di più, e poi le altre, ma sempre partendo dall'ordine in cui sono nel dizionario. Quindi si finisce per ripetere sempre le prime parole del dizionario: bisogna introdurre un mescolamento.
-* [ ] Ogni volta che faccio una ripetizione, viene aggiornata la data di ultima ripetizione, e quindi se nello stesso giorno voglio invece applicare la strategia, quella parola risulta già studiata (ripetuta 2 volte invece delle 5 della strategia). Questo non dovrebbe succedere: la strategia di apprendimento non dovrebbe essere influenzata dalle ripetizioni extra, che dovrebbero rimanere qualcosa di extra. Per il momento si aggiusta obbligandomi a fare l'apprendimento come prima cosa ogni giorno e poi fare ripetizione solo quando ne ho abbastanza di aggiungere parole.
+* [X] Quando si ripetono le parole, 10 per esempio, vengono scelte quelle in cui si è sbagliato di più, e poi le altre, ma sempre partendo dall'ordine in cui sono nel dizionario. Quindi si finisce per ripetere sempre le prime parole del dizionario: bisogna introdurre un mescolamento.
+* [X] Ogni volta che faccio una ripetizione, viene aggiornata la data di ultima ripetizione, e quindi se nello stesso giorno voglio invece applicare la strategia, quella parola risulta già studiata (ripetuta 2 volte invece delle 5 della strategia). Questo non dovrebbe succedere: la strategia di apprendimento non dovrebbe essere influenzata dalle ripetizioni extra, che dovrebbero rimanere qualcosa di extra. Per il momento si aggiusta obbligandomi a fare l'apprendimento come prima cosa ogni giorno e poi fare ripetizione solo quando ne ho abbastanza di aggiungere parole. _(ho distinto i due casi)_
