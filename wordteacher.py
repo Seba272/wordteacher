@@ -180,7 +180,7 @@ def write_log(name,string):
         log_file.write(string)
         log_file.write(" \n")
 
-def testing(test_batch,from_diz,log_string):
+def testing(test_batch,from_diz,log_string,strat_or_not):
     number_words = len(test_batch)
     try:
         while number_words > 0 :
@@ -200,7 +200,8 @@ def testing(test_batch,from_diz,log_string):
                         + colors.lang[not p] + from_diz.languages[not p] + ": ")
                 if from_diz.data[test_batch[k][0]][4] == 0 :
                     from_diz.data[test_batch[k][0]][4] = int(time.time())
-                from_diz.data[test_batch[k][0]][5] = int(time.time())
+                if strat_or_not :
+                    from_diz.data[test_batch[k][0]][5] = int(time.time())
                 write_log( from_diz.name , log_string + log_separator + question + log_separator + rightans + log_separator + answer)
                 if answer.strip() == rightans :
                     from_diz.data[test_batch[k][0]][2] += 1
@@ -217,13 +218,13 @@ def testing(test_batch,from_diz,log_string):
 def learn(diz):
     length_batch = int(input("How many words? "))
     test_batch = diz.make_batch_learn(length_batch)
-    testing(test_batch,diz,"learn")
+    testing(test_batch,diz,"learn",True)
     diz.save_data()
 
 def repeat(diz):
     length_batch = int(input("How many words? "))
     test_batch = diz.make_batch_repeat(length_batch)
-    testing(test_batch,diz,"repeat")
+    testing(test_batch,diz,"repeat",False)
     diz.save_data()
 
 # Menu
