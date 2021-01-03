@@ -109,12 +109,12 @@ class dizionario:
         strat_repetitions = max(self.strategy)
         strat_days = len(self.strategy)
         for w in range(len(self.data)) :
-            if self.data[w][4] == 0 :
+            if self.data[w][4] < self.birth_date :
                 word_days = 0
             else :
                 word_days = max(int((today/86400 - self.data[w][4]/86400)),0)
             word_level = self.data[w][2] - self.data[w][3]
-            if word_days <= strat_days and int(self.data[w][5]/86400) < int(today/86400) : #and word_level < sum([self.strategy[j] for j in range(word_days+1)]) :
+            if word_days <= strat_days and int(self.data[w][5]/86400) < int(today/86400) and self.strategy[word_days]!=0 : #and word_level < sum([self.strategy[j] for j in range(word_days+1)]) :
                 batch.append([w,self.strategy[word_days]])
             if len(batch) >= n_words :
                 break
