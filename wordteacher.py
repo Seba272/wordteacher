@@ -114,7 +114,7 @@ class dizionario:
             else :
                 word_days = max(int((today/86400 - self.data[w][4]/86400)),0)
             word_level = self.data[w][2] - self.data[w][3]
-            if word_days <= strat_days and int(self.data[w][5]/86400) < int(today/86400) and self.strategy[word_days]!=0 : #and word_level < sum([self.strategy[j] for j in range(word_days+1)]) :
+            if word_days < strat_days and int(self.data[w][5]/86400) < int(today/86400) and self.strategy[word_days]!=0 : #and word_level < sum([self.strategy[j] for j in range(word_days+1)]) :
                 batch.append([w,self.strategy[word_days]])
             if len(batch) >= n_words :
                 break
@@ -154,14 +154,14 @@ class dizionario:
         yn = input("Do you want a printout of the whole dictionary? ")
         if yn[0] == "y" :
             f_status_name = input("Where? ")
-            header = [self.languages[0], self.languages[1],"Tests","Level","Level","First test","Last test"]
+            header = [self.languages[0], self.languages[1],"+","-","Level","First test","Last test"]
             table = []
             for word in self.data :
                 table.append([\
                         word[0],\
                         word[1],\
-                        word[2]+word[3],\
-                        word[2]-word[3],\
+                        word[2],\
+                        word[2],\
                         word[3]/max(word[2],1),\
                         time.strftime("%Y/%m/%d %H:%M:%S",time.localtime(word[4])),\
                         time.strftime("%Y/%m/%d %H:%M:%S",time.localtime(word[5]))\
