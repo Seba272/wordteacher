@@ -161,11 +161,27 @@ class dizionario:
                         word[0],\
                         word[1],\
                         word[2],\
-                        word[2],\
+                        word[3],\
                         word[3]/max(word[2],1),\
                         time.strftime("%Y/%m/%d %H:%M:%S",time.localtime(word[4])),\
                         time.strftime("%Y/%m/%d %H:%M:%S",time.localtime(word[5]))\
                         ])
+            with open(f_status_name,"w") as f_status :
+                f_status.write(tabulate(table,header))
+        yn = input("Do you want a printout in order of level? ")
+        if yn[0] == "y" :
+            f_status_name = input("Where? ")
+            header = [self.languages[0], self.languages[1],"+","-","Level"]
+            table = []
+            for word in self.data :
+                table.append([\
+                        word[0],\
+                        word[1],\
+                        word[2],\
+                        word[3],\
+                        word[3]/max(word[2],1),\
+                        ])
+            table.sort(key = lambda k: k[4],reverse=True)
             with open(f_status_name,"w") as f_status :
                 f_status.write(tabulate(table,header))
 
